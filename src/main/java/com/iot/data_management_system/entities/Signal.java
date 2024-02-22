@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(name="signals")
@@ -24,7 +25,7 @@ public class Signal {
 	private int id;
 	
 	@Column(name="device_id")
-	private int device_id;
+	private int deviceId;
 	
 	@Column(name="timestamp")
 	private LocalDateTime localDateTime; 
