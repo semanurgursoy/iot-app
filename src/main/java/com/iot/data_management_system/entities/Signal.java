@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(name="signals")
@@ -37,9 +36,9 @@ public class Signal {
 	private double humidity;
 	
 	@Column(name="wind_speed")
-	private double wind_speed;
+	private double windSpeed;
 	
 	@Column(name="light_intensity")
-	private double light_intensity;
+	private double lightIntensity;
 
 }

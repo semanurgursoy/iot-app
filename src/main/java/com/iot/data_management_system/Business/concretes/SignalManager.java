@@ -1,12 +1,11 @@
 package com.iot.data_management_system.Business.concretes;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,32 @@ public class SignalManager implements SignalService {
 	public List<Signal> getAllByDeviceId(int id) {
 		return signalRepository.findByDeviceId(id);
 	}
-
+	
+	@Override
+	public List<Signal> getAllByDate(LocalDate date){
+		return signalRepository.findByDate(date);
+	}
+	
+	@Override
+	public List<Signal> getAllByTemperature(double temperature, int condition){
+		return signalRepository.findByTemperature(temperature, condition);
+	}
+	
+	@Override
+	public List<Signal> getAllByHumidity(double humidity, int condition){
+		return signalRepository.findByHumidity(humidity, condition);
+	}
+	
+	@Override
+	public List<Signal> getAllByWindSpeed(double windSpeed, int condition){
+		return signalRepository.findByWindSpeed(windSpeed, condition);
+	}
+	
+	@Override
+	public List<Signal> getAllByLightIntensity(double lightIntensity, int condition){
+		return signalRepository.findByLightIntensity(lightIntensity, condition);
+	}
+	
 	@Override
 	public Optional<Signal> getById(int id) {
 		return signalRepository.findById(id);
@@ -60,10 +84,10 @@ public class SignalManager implements SignalService {
 			Signal s = signalRepository.getReferenceById(signal.getId());
 			s.setDeviceId(signal.getDeviceId());
 			s.setHumidity(signal.getHumidity());
-			s.setLight_intensity(signal.getLight_intensity());
+			s.setLightIntensity(signal.getLightIntensity());
 			s.setLocalDateTime(signal.getLocalDateTime());
 			s.setTemperature(signal.getTemperature());
-			s.setWind_speed(signal.getWind_speed());
+			s.setWindSpeed(signal.getWindSpeed());
 			
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		}
