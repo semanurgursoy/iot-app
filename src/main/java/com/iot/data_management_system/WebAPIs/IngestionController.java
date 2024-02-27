@@ -22,12 +22,12 @@ public class IngestionController {
 		this.signalService = signalService;
 	}
 
-	@PostMapping("/addMeasurement")
+	@PostMapping("/add_measurement")
     public ResponseEntity<HttpStatus> addMeasurement(@RequestBody Signal signal) {
 		return signalService.add(signal);
     }
 	
-	@PostMapping("/addMeasurements")
+	@PostMapping("/add_measurements")
     public ResponseEntity<HttpStatus> addMeasurements(@RequestBody List<Signal> signals) {
 		return signalService.add(signals);
     }
