@@ -44,10 +44,12 @@ public class SensorManager implements SensorService {
 	}
 
 	@Override
-	public SensorDto getByName(String name) {
-		Sensor sensor = sensorRepository.findByName(name);
-		SensorDto dto = modelMapper.map(sensor, SensorDto.class);
-		return dto;
+	public List<SensorDto> getByName(String name) {
+		List<Sensor> sensorList = sensorRepository.findByName(name);
+		List<SensorDto> dtoList = new ArrayList<SensorDto>();
+		for(Sensor sensor: sensorList)
+			dtoList.add(modelMapper.map(sensor, SensorDto.class));
+		return dtoList;
 	}
 
 	@Override

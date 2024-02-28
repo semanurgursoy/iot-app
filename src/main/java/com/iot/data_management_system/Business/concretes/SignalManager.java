@@ -43,8 +43,9 @@ public class SignalManager implements SignalService {
 	}
 
 	@Override
-	public List<SignalDto> getAllByDeviceId(int id) {
-		List<Signal> signalList = signalRepository.findByDeviceId(id);
+	public List<SignalDto> getAllByDevice(String serialNumber) {
+		Device device = deviceRepository.findBySerialNumber(serialNumber);
+		List<Signal> signalList = signalRepository.findByDeviceId(device.getId());
 		List<SignalDto> dtoList = new ArrayList<SignalDto>();
 		for(Signal s: signalList)
 			dtoList.add(modelMapper.map(s, SignalDto.class));
@@ -104,22 +105,40 @@ public class SignalManager implements SignalService {
 	}
 
 	@Override
-	public ResponseEntity<HttpStatus> add(Signal signal) {
-		signal.setLocalDateTime(LocalDateTime.now());
-		Device device = deviceRepository.findBySerialNumber(signal.getDevice().getSerialNumber());
-		signal.setDevice(device);
-		signalRepository.save(signal);
-		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+	public ResponseEntity<HttpStatus> add(SignalDto dto) {
+		if(deviceRepository.existsBySerialNumber(dto.getDevice())) {
+			Signal signal = new Signal();
+			Device device = deviceRepository.findBySerialNumber(dto.getDevice());
+			
+			signal.setLocalDateTime(LocalDateTime.now());
+			signal.setDevice(device);
+			
+			BeanUtils.copyProperties(dto, signal, "localDateTime", "device");
+			
+			signalRepository.save(signal);
+			
+			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		}
+		return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
 	}
 
 	@Override
-	public ResponseEntity<HttpStatus> add(List<Signal> signals) {
-		for (Signal s : signals) {
-            s.setLocalDateTime(LocalDateTime.now());
-            Device device = deviceRepository.findBySerialNumber(s.getDevice().getSerialNumber());
-    		s.setDevice(device);
+	public ResponseEntity<HttpStatus> add(List<SignalDto> dtoList) {
+		for (SignalDto dto : dtoList) {
+			if(deviceRepository.existsBySerialNumber(dto.getDevice())) {
+				Signal signal = new Signal();
+				Device device = deviceRepository.findBySerialNumber(dto.getDevice());
+				
+				signal.setLocalDateTime(LocalDateTime.now());
+				signal.setDevice(device);
+				
+				BeanUtils.copyProperties(dto, signal, "localDateTime", "device");
+				
+				signalRepository.save(signal);
+			}
+			else
+				return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
         }
-		signalRepository.saveAll(signals);
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}
 

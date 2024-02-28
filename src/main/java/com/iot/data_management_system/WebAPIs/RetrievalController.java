@@ -27,9 +27,9 @@ public class RetrievalController {
 		return signalService.getAll();
 	}
 	
-	@GetMapping("/getall_by_deviceid")
-	public List<SignalDto> getAllByDeviceId(int id){
-		return signalService.getAllByDeviceId(id);
+	@GetMapping("/getall_by_device")
+	public List<SignalDto> getAllByDevice(String serialNumber){
+		return signalService.getAllByDevice(serialNumber);
 	}
 	
 	@GetMapping("/getall_by_date")

@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.iot.data_management_system.Business.Utils;
@@ -23,6 +25,8 @@ public class UserManager implements UserService {
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private ModelMapper modelMapper;
+	@Autowired
+	private PasswordEncoder encoder;
 
 	public UserManager(UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper) {
 		this.userRepository = userRepository;
@@ -55,13 +59,19 @@ public class UserManager implements UserService {
 		UserDto dto = modelMapper.map(user, UserDto.class);
 		return dto;
 	}
+	
+	@Override 
+	public User findByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
 
 	@Override
 	public ResponseEntity<HttpStatus> add(UserDto dto) {
 		if(!userRepository.existsByEmail(dto.getEmail()) && roleRepository.existsByRole(dto.getRole())) {
 			User user = new User();
 			user.setRole(roleRepository.findByRole(dto.getRole()));
-			BeanUtils.copyProperties(dto, user, "id", "role");
+			user.setPassword(encoder.encode(dto.getPassword()));
+			BeanUtils.copyProperties(dto, user, "id", "role", "password");
 			userRepository.save(user);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		}
@@ -73,8 +83,11 @@ public class UserManager implements UserService {
 	public ResponseEntity<HttpStatus> update(UserDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
         	User user = userRepository.findByEmail(dto.getEmail());
-        	if(!dto.getRole().isEmpty() && roleRepository.existsByRole(dto.getRole())) {
-        		user.setRole(roleRepository.findByRole(dto.getRole()));
+        	if(dto.getRole() != null && roleRepository.existsByRole(dto.getRole())) 
+        		user.setRole(roleRepository.findByRole(dto.getRole()));       	
+        	if(dto.getPassword() != null) { 
+        		user.setPassword(encoder.encode(dto.getPassword()));
+        		dto.setPassword(null);
         	}
             BeanUtils.copyProperties(dto, user, Utils.getNullPropertyNames(dto));
 

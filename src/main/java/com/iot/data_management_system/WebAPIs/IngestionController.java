@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iot.data_management_system.Business.abstracts.SignalService;
-import com.iot.data_management_system.entities.Signal;
+import com.iot.data_management_system.entities.dto.SignalDto;
 
 @RestController
 @RequestMapping("/api/ingestion")
@@ -23,12 +23,12 @@ public class IngestionController {
 	}
 
 	@PostMapping("/add_measurement")
-    public ResponseEntity<HttpStatus> addMeasurement(@RequestBody Signal signal) {
-		return signalService.add(signal);
+    public ResponseEntity<HttpStatus> addMeasurement(@RequestBody SignalDto dto) {
+		return signalService.add(dto);
     }
 	
 	@PostMapping("/add_measurements")
-    public ResponseEntity<HttpStatus> addMeasurements(@RequestBody List<Signal> signals) {
-		return signalService.add(signals);
+    public ResponseEntity<HttpStatus> addMeasurements(@RequestBody List<SignalDto> dtoList) {
+		return signalService.add(dtoList);
     }
 }

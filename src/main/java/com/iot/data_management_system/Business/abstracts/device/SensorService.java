@@ -10,7 +10,7 @@ import com.iot.data_management_system.entities.dto.SensorDto;
 public interface SensorService {
 
 	List<SensorDto> getAll();
-	SensorDto getByName(String name);
+	List<SensorDto> getByName(String name);
 	SensorDto getBySerialNumber(String num);
 	
 	ResponseEntity<HttpStatus> add(SensorDto sensorDto);
