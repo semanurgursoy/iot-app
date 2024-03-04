@@ -24,12 +24,12 @@ public class DevicesController {
 	}
 	
 	@GetMapping("/getall")
-	public List<DeviceDto> getAll(){
+	public ResponseEntity<List<DeviceDto>> getAll(){
 		return deviceService.getAll();
 	}
 	
 	@GetMapping("/get_by_serial_number")
-	public DeviceDto getBySerialNumber(String serialNumber){
+	public ResponseEntity<DeviceDto> getBySerialNumber(String serialNumber){
 		return deviceService.getBySerialNumber(serialNumber);
 	}
 	

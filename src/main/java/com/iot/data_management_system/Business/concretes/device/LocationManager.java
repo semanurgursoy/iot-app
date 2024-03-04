@@ -27,12 +27,12 @@ public class LocationManager implements LocationService {
 	}
 
 	@Override
-	public List<LocationDto> getAll() {
+	public ResponseEntity<List<LocationDto>> getAll() {
 		List<Location> locationList = locationRepository.findAll();
 		List<LocationDto> dtoList = new ArrayList<LocationDto>();
 		for(Location location: locationList)
 			dtoList.add(modelMapper.map(location, LocationDto.class));
-		return dtoList;
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override

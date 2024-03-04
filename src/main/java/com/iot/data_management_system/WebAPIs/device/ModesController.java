@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iot.data_management_system.Business.abstracts.device.ModeService;
-import com.iot.data_management_system.entities.device.Mode;
 import com.iot.data_management_system.entities.dto.ModeDto;
 
 
@@ -27,18 +26,18 @@ public class ModesController {
 	}
 	
 	@GetMapping("/getall")
-	public List<ModeDto> getAll(){
+	public ResponseEntity<List<ModeDto>> getAll(){
 		return modeService.getAll();
 	}
 	
 	@GetMapping("/get_by_mode")
-	public ModeDto getByMode(String mode){
+	public ResponseEntity<ModeDto> getByMode(String mode){
 		return modeService.getByName(mode);
 	}
 	
 	@PostMapping("/add")
-	public ResponseEntity<HttpStatus> add(@RequestBody Mode mode){
-		return modeService.add(mode);
+	public ResponseEntity<HttpStatus> add(@RequestBody ModeDto modeDto){
+		return modeService.add(modeDto);
 	}
 	
 	@PostMapping("/update")

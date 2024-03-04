@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,42 +24,48 @@ public class UserManager implements UserService {
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
 	private ModelMapper modelMapper;
-	@Autowired
-	private PasswordEncoder encoder;
-
-	public UserManager(UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper) {
+	private final PasswordEncoder encoder;
+	
+	public UserManager(UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper, PasswordEncoder encoder) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.modelMapper = modelMapper;
+		this.encoder = encoder;
 	}
 
 	@Override
-	public List<UserDto> getAll() {
+	public ResponseEntity<List<UserDto>> getAll() {
 		List<User> userList = userRepository.findAll();
 		List<UserDto> dtoList = new ArrayList<UserDto>();
 		for(User user: userList)
 			dtoList.add(modelMapper.map(user, UserDto.class));
-		return dtoList;
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override
-	public List<UserDto> getByRole(String role) {
-		Role roleObject = roleRepository.findByRole(role);
-		List<User> userList = userRepository.findByRole(roleObject);
-		List<UserDto> dtoList = new ArrayList<UserDto>();
-		for(User user: userList)
-			dtoList.add(modelMapper.map(user, UserDto.class));
-		return dtoList;
+	public ResponseEntity<List<UserDto>> getByRole(String role) {
+		if(roleRepository.existsByRole(role)) {
+			Role roleObject = roleRepository.findByRole(role);
+			List<User> userList = userRepository.findByRole(roleObject);
+			List<UserDto> dtoList = new ArrayList<UserDto>();
+			for(User user: userList)
+				dtoList.add(modelMapper.map(user, UserDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
-	public UserDto getByEmail(String email) {
-		User user = userRepository.findByEmail(email);
-		UserDto dto = modelMapper.map(user, UserDto.class);
-		return dto;
+	public ResponseEntity<UserDto> getByEmail(String email) {
+		if(userRepository.existsByEmail(email)) {
+			User user = userRepository.findByEmail(email);
+			UserDto dto = modelMapper.map(user, UserDto.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
-	@Override 
+	@Override
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}

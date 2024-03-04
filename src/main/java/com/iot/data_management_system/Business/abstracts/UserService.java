@@ -10,9 +10,9 @@ import com.iot.data_management_system.entities.dto.UserDto;
 
 public interface UserService {
 	
-	List<UserDto> getAll();
-	List<UserDto> getByRole(String role);
-	UserDto getByEmail(String email);
+	ResponseEntity<List<UserDto>> getAll();
+	ResponseEntity<List<UserDto>> getByRole(String role);
+	ResponseEntity<UserDto> getByEmail(String email);
 	User findByEmail(String email);
 	
 	ResponseEntity<HttpStatus> add(UserDto dto);

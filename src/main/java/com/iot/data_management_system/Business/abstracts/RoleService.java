@@ -4,16 +4,14 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import com.iot.data_management_system.entities.Role;
 import com.iot.data_management_system.entities.dto.RoleDto;
 
 public interface RoleService {
 	
-	List<RoleDto> getAll();
-	RoleDto getByRole(String role);
+	ResponseEntity<List<RoleDto>> getAll();
+	ResponseEntity<RoleDto> getByRole(String role);
 	
-	ResponseEntity<HttpStatus> add(Role role);
+	ResponseEntity<HttpStatus> add(RoleDto roleDto);
     ResponseEntity<HttpStatus> update(String role, String newRole);
     ResponseEntity<HttpStatus> delete(int id);
 

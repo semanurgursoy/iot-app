@@ -34,74 +34,95 @@ public class SignalManager implements SignalService {
 	}
 
 	@Override
-	public List<SignalDto> getAll() {
+	public ResponseEntity<List<SignalDto>> getAll() {
 		List<Signal> signalList = signalRepository.findAll();
 		List<SignalDto> dtoList = new ArrayList<SignalDto>();
 		for(Signal s: signalList)
 			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override
-	public List<SignalDto> getAllByDevice(String serialNumber) {
-		Device device = deviceRepository.findBySerialNumber(serialNumber);
-		List<Signal> signalList = signalRepository.findByDeviceId(device.getId());
-		List<SignalDto> dtoList = new ArrayList<SignalDto>();
-		for(Signal s: signalList)
-			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+	public ResponseEntity<List<SignalDto>> getAllByDevice(String serialNumber) {
+		if(deviceRepository.existsBySerialNumber(serialNumber)) {
+			Device device = deviceRepository.findBySerialNumber(serialNumber);
+			List<Signal> signalList = signalRepository.findByDeviceId(device.getId());
+			List<SignalDto> dtoList = new ArrayList<SignalDto>();
+			for(Signal s: signalList)
+				dtoList.add(modelMapper.map(s, SignalDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
 	@Override
-	public List<SignalDto> getAllByDate(LocalDate date){
-		List<Signal> signalList = signalRepository.findByDate(date);
-		List<SignalDto> dtoList = new ArrayList<SignalDto>();
-		for(Signal s: signalList)
-			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+	public ResponseEntity<List<SignalDto>> getAllByDate(LocalDate date){
+		if(signalRepository.existsByLocalDate(date)) {
+			List<Signal> signalList = signalRepository.findByDate(date);
+			List<SignalDto> dtoList = new ArrayList<SignalDto>();
+			for(Signal s: signalList)
+				dtoList.add(modelMapper.map(s, SignalDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
 	@Override
-	public List<SignalDto> getAllByTemperature(double temperature, int condition){
-		List<Signal> signalList = signalRepository.findByTemperature(temperature, condition);
-		List<SignalDto> dtoList = new ArrayList<SignalDto>();
-		for(Signal s: signalList)
-			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+	public ResponseEntity<List<SignalDto>> getAllByTemperature(double temperature, int condition){
+		if(condition == 0 | condition == 1 | condition == 2) {
+			List<Signal> signalList = signalRepository.findByTemperature(temperature, condition);
+			List<SignalDto> dtoList = new ArrayList<SignalDto>();
+			for(Signal s: signalList)
+				dtoList.add(modelMapper.map(s, SignalDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
-	public List<SignalDto> getAllByHumidity(double humidity, int condition){
-		List<Signal> signalList = signalRepository.findByHumidity(humidity, condition);
-		List<SignalDto> dtoList = new ArrayList<SignalDto>();
-		for(Signal s: signalList)
-			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+	public ResponseEntity<List<SignalDto>> getAllByHumidity(double humidity, int condition){
+		if(condition == 0 | condition == 1 | condition == 2) {
+			List<Signal> signalList = signalRepository.findByHumidity(humidity, condition);
+			List<SignalDto> dtoList = new ArrayList<SignalDto>();
+			for(Signal s: signalList)
+				dtoList.add(modelMapper.map(s, SignalDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
-	public List<SignalDto> getAllByWindSpeed(double windSpeed, int condition){
-		List<Signal> signalList = signalRepository.findByWindSpeed(windSpeed, condition);
-		List<SignalDto> dtoList = new ArrayList<SignalDto>();
-		for(Signal s: signalList)
-			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+	public ResponseEntity<List<SignalDto>> getAllByWindSpeed(double windSpeed, int condition){
+		if(condition == 0 | condition == 1 | condition == 2) {
+			List<Signal> signalList = signalRepository.findByWindSpeed(windSpeed, condition);
+			List<SignalDto> dtoList = new ArrayList<SignalDto>();
+			for(Signal s: signalList)
+				dtoList.add(modelMapper.map(s, SignalDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
-	public List<SignalDto> getAllByLightIntensity(double lightIntensity, int condition){
-		List<Signal> signalList = signalRepository.findByLightIntensity(lightIntensity, condition);
-		List<SignalDto> dtoList = new ArrayList<SignalDto>();
-		for(Signal s: signalList)
-			dtoList.add(modelMapper.map(s, SignalDto.class));
-		return dtoList;
+	public ResponseEntity<List<SignalDto>> getAllByLightIntensity(double lightIntensity, int condition){
+		if(condition == 0 | condition == 1 | condition == 2) {
+			List<Signal> signalList = signalRepository.findByLightIntensity(lightIntensity, condition);
+			List<SignalDto> dtoList = new ArrayList<SignalDto>();
+			for(Signal s: signalList)
+				dtoList.add(modelMapper.map(s, SignalDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
-	public SignalDto getById(int id) {
-		Signal signal = signalRepository.findById(id).get();
-		SignalDto dto = modelMapper.map(signal, SignalDto.class);
-		return dto;
+	public ResponseEntity<SignalDto> getById(int id) {
+		if(signalRepository.existsById(id)) {
+			Signal signal = signalRepository.findById(id).get();
+			SignalDto dto = modelMapper.map(signal, SignalDto.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override

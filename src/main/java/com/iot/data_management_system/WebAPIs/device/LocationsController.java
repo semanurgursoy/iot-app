@@ -24,7 +24,7 @@ public class LocationsController {
 	}
 	
 	@GetMapping("/getall")
-	public List<LocationDto> getAll(){
+	public ResponseEntity<List<LocationDto>> getAll(){
 		return locationService.getAll();
 	}
 	

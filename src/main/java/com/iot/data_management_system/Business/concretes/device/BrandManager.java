@@ -25,24 +25,29 @@ public class BrandManager implements BrandService {
 	}
 
 	@Override
-	public List<BrandDto> getAll() {
+	public ResponseEntity<List<BrandDto>> getAll() {
 		List<Brand> brandList = brandRepository.findAll();
 		List<BrandDto> dtoList = new ArrayList<BrandDto>();
 		for(Brand brand: brandList)
 			dtoList.add(modelMapper.map(brand, BrandDto.class));
-		return dtoList;	
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override
-	public BrandDto getByName(String brand) {
-		Brand brandObjet = brandRepository.findByBrand(brand);
-		BrandDto dto = modelMapper.map(brandObjet, BrandDto.class);
-		return dto;
+	public ResponseEntity<BrandDto> getByName(String brand) {
+		if(brandRepository.existsByBrand(brand)) {
+			Brand brandObjet = brandRepository.findByBrand(brand);
+			BrandDto dto = modelMapper.map(brandObjet, BrandDto.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
-	public ResponseEntity<HttpStatus> add(Brand brand) {
-		if(!brandRepository.existsByBrand(brand.getBrand())) {
+	public ResponseEntity<HttpStatus> add(BrandDto brandDto) {
+		if(!brandRepository.existsByBrand(brandDto.getBrand())) {
+			Brand brand = new Brand();
+			brand.setBrand(brandDto.getBrand());
 			brandRepository.save(brand);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		}

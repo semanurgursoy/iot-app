@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iot.data_management_system.Business.abstracts.device.BrandService;
-import com.iot.data_management_system.entities.device.Brand;
 import com.iot.data_management_system.entities.dto.BrandDto;
 
 @RestController
@@ -25,18 +24,18 @@ public class BrandsController {
 	}
 	
 	@GetMapping("/getall")
-	public List<BrandDto> getAll(){
+	public ResponseEntity<List<BrandDto>> getAll(){
 		return brandService.getAll();
 	}
 	
 	@GetMapping("/get_by_brand")
-	public BrandDto getByBrand(String brand){
+	public ResponseEntity<BrandDto> getByBrand(String brand){
 		return brandService.getByName(brand);
 	}
 	
 	@PostMapping("/add")
-	public ResponseEntity<HttpStatus> add(@RequestBody Brand brand){
-		return brandService.add(brand);
+	public ResponseEntity<HttpStatus> add(@RequestBody BrandDto brandDto){
+		return brandService.add(brandDto);
 	}
 	
 	@PostMapping("/update")

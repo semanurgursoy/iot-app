@@ -24,17 +24,17 @@ public class UsersController {
 	}
 	
 	@GetMapping("/getall")
-	public List<UserDto> getAll(){
+	public ResponseEntity<List<UserDto>> getAll(){
 		return userService.getAll();
 	}
 	
 	@GetMapping("/getall_by_role")
-	public List<UserDto> getAllByRole(String role){
+	public ResponseEntity<List<UserDto>> getAllByRole(String role){
 		return userService.getByRole(role);
 	}
 	
 	@GetMapping("/get_by_email")
-	public UserDto getByEmail(String email){
+	public ResponseEntity<UserDto> getByEmail(String email){
 		return userService.getByEmail(email);
 	}
 	

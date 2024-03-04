@@ -25,28 +25,33 @@ public class RoleManager implements RoleService {
 	}
 
 	@Override
-	public List<RoleDto> getAll() {
+	public ResponseEntity<List<RoleDto>> getAll() {
 		List<Role> roleList = roleRepository.findAll();
 		List<RoleDto> dtoList = new ArrayList<RoleDto>();
 		for(Role role: roleList)
 			dtoList.add(modelMapper.map(role, RoleDto.class));
-		return dtoList;
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override
-	public RoleDto getByRole(String role) {
-		Role roleObject = roleRepository.findByRole(role);
-		RoleDto dto = modelMapper.map(roleObject, RoleDto.class);
-		return dto;
-	}
-
-	@Override
-	public ResponseEntity<HttpStatus> add(Role role) {
-		if(!roleRepository.existsByRole(role.getRole())) {
-			roleRepository.save(role);
-			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+	public ResponseEntity<RoleDto> getByRole(String role) {
+		if(roleRepository.existsByRole(role)) {
+			Role roleObject = roleRepository.findByRole(role);
+			RoleDto dto = modelMapper.map(roleObject, RoleDto.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
 		}
-		return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
+	@Override
+	public ResponseEntity<HttpStatus> add(RoleDto roleDto) {
+		if(!roleRepository.existsByRole(roleDto.getRole())) {
+			Role role = new Role();
+			role.setRole(roleDto.getRole());
+			roleRepository.save(role);
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@Override

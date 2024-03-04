@@ -24,17 +24,17 @@ public class SensorsController {
 	}
 	
 	@GetMapping("/getall")
-	public List<SensorDto> getAll(){
+	public ResponseEntity<List<SensorDto>> getAll(){
 		return sensorService.getAll();
 	}
 	
 	@GetMapping("/getall_by_name")
-	public List<SensorDto> getByName(String name){
+	public ResponseEntity<List<SensorDto>> getByName(String name){
 		return sensorService.getByName(name);
 	}
 	
 	@GetMapping("/get_by_serial_number")
-	public SensorDto getBySerialNumber(String serialNumber){
+	public ResponseEntity<SensorDto> getBySerialNumber(String serialNumber){
 		return sensorService.getBySerialNumber(serialNumber);
 	}
 	

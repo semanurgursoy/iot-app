@@ -4,16 +4,14 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import com.iot.data_management_system.entities.device.Brand;
 import com.iot.data_management_system.entities.dto.BrandDto;
 
 public interface BrandService {
 
-	List<BrandDto> getAll();
-	BrandDto getByName(String brand);
+	ResponseEntity<List<BrandDto>> getAll();
+	ResponseEntity<BrandDto> getByName(String brand);
 	
-	ResponseEntity<HttpStatus> add(Brand brand);
+	ResponseEntity<HttpStatus> add(BrandDto brandDto);
     ResponseEntity<HttpStatus> update(String brand, String newBrand);
     ResponseEntity<HttpStatus> delete(int id);
     

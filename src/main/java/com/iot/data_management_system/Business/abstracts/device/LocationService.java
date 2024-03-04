@@ -9,7 +9,7 @@ import com.iot.data_management_system.entities.dto.LocationDto;
 
 public interface LocationService {
 
-	List<LocationDto> getAll();
+	ResponseEntity<List<LocationDto>> getAll();
 	
 	ResponseEntity<HttpStatus> add(LocationDto locationDto);
     ResponseEntity<HttpStatus> update(LocationDto locationDto);

@@ -25,24 +25,29 @@ public class ModeManager implements ModeService {
 	}
 
 	@Override
-	public List<ModeDto> getAll() {
+	public ResponseEntity<List<ModeDto>> getAll() {
 		List<Mode> modeList = modeRepository.findAll();
 		List<ModeDto> dtoList = new ArrayList<ModeDto>();
 		for(Mode mode: modeList)
 			dtoList.add(modelMapper.map(mode, ModeDto.class));
-		return dtoList;
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override
-	public ModeDto getByName(String mode) {
-		Mode modeObject = modeRepository.findByMode(mode);
-		ModeDto dto = modelMapper.map(modeObject, ModeDto.class);
-		return dto;
+	public ResponseEntity<ModeDto> getByName(String mode) {
+		if(modeRepository.existsByMode(mode)) {
+			Mode modeObject = modeRepository.findByMode(mode);
+			ModeDto dto = modelMapper.map(modeObject, ModeDto.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
-	public ResponseEntity<HttpStatus> add(Mode mode) {
-		if(!modeRepository.existsByMode(mode.getMode())) {
+	public ResponseEntity<HttpStatus> add(ModeDto modeDto) {
+		if(!modeRepository.existsByMode(modeDto.getMode())) {
+			Mode mode = new Mode();
+			mode.setMode(modeDto.getMode());
 			modeRepository.save(mode);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		}

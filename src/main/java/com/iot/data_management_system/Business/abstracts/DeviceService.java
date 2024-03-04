@@ -9,8 +9,8 @@ import com.iot.data_management_system.entities.dto.DeviceDto;
 
 public interface DeviceService {
 
-	List<DeviceDto> getAll();
-	DeviceDto getBySerialNumber(String num);
+	ResponseEntity<List<DeviceDto>> getAll();
+	ResponseEntity<DeviceDto> getBySerialNumber(String num);
 	
 	ResponseEntity<HttpStatus> add(DeviceDto deviceDto);
     ResponseEntity<HttpStatus> update(DeviceDto deviceDto);

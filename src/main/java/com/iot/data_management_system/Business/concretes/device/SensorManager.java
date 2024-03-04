@@ -24,9 +24,8 @@ public class SensorManager implements SensorService {
 	private ModeRepository modeRepository;
 	private BrandRepository brandRepository;
 	private ModelMapper modelMapper;
-	
 
-	public SensorManager(SensorRepository sensorRepository, ModeRepository modeRepository, 
+	public SensorManager(SensorRepository sensorRepository, ModeRepository modeRepository,
 			BrandRepository brandRepository, ModelMapper modelMapper) {
 		this.sensorRepository = sensorRepository;
 		this.modeRepository = modeRepository;
@@ -35,42 +34,48 @@ public class SensorManager implements SensorService {
 	}
 
 	@Override
-	public List<SensorDto> getAll() {
+	public ResponseEntity<List<SensorDto>> getAll() {
 		List<Sensor> sensorList = sensorRepository.findAll();
 		List<SensorDto> dtoList = new ArrayList<SensorDto>();
-		for(Sensor sensor: sensorList)
+		for (Sensor sensor : sensorList)
 			dtoList.add(modelMapper.map(sensor, SensorDto.class));
-		return dtoList;
+		return new ResponseEntity<>(dtoList, HttpStatus.OK);
 	}
 
 	@Override
-	public List<SensorDto> getByName(String name) {
-		List<Sensor> sensorList = sensorRepository.findByName(name);
-		List<SensorDto> dtoList = new ArrayList<SensorDto>();
-		for(Sensor sensor: sensorList)
-			dtoList.add(modelMapper.map(sensor, SensorDto.class));
-		return dtoList;
+	public ResponseEntity<List<SensorDto>> getByName(String name) {
+		if (sensorRepository.existsByName(name)) {
+			List<Sensor> sensorList = sensorRepository.findByName(name);
+			List<SensorDto> dtoList = new ArrayList<SensorDto>();
+			for (Sensor sensor : sensorList)
+				dtoList.add(modelMapper.map(sensor, SensorDto.class));
+			return new ResponseEntity<>(dtoList, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
-	public SensorDto getBySerialNumber(String num) {
-		Sensor sensor = sensorRepository.findBySerialNumber(num);
-		SensorDto dto = modelMapper.map(sensor, SensorDto.class);
-		return dto;
+	public ResponseEntity<SensorDto> getBySerialNumber(String num) {
+		if (sensorRepository.existsBySerialNumber(num)) {
+			Sensor sensor = sensorRepository.findBySerialNumber(num);
+			SensorDto dto = modelMapper.map(sensor, SensorDto.class);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<HttpStatus> add(SensorDto sensorDto) {
-		if(!sensorRepository.existsBySerialNumber(sensorDto.getSerialNumber()) 
+		if (!sensorRepository.existsBySerialNumber(sensorDto.getSerialNumber())
 				&& modeRepository.existsByMode(sensorDto.getMode())
-						&& brandRepository.existsByBrand(sensorDto.getBrand())) {
+				&& brandRepository.existsByBrand(sensorDto.getBrand())) {
 			Sensor sensor = new Sensor();
 			sensor.setMode(modeRepository.findByMode(sensorDto.getMode()));
 			sensor.setBrand(brandRepository.findByBrand(sensorDto.getBrand()));
 			BeanUtils.copyProperties(sensorDto, sensor, Utils.getNullPropertyNames(sensorDto));
-			
+
 			sensorRepository.save(sensor);
-			
+
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		}
 		return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
@@ -79,23 +84,28 @@ public class SensorManager implements SensorService {
 	@Override
 	public ResponseEntity<HttpStatus> update(SensorDto sensorDto) {
 		if (sensorRepository.existsBySerialNumber(sensorDto.getSerialNumber())) {
-        	Sensor sensor = sensorRepository.findBySerialNumber(sensorDto.getSerialNumber());
-        	if(sensorDto.getMode() != null) 
-        		sensor.setMode(modeRepository.findByMode(sensorDto.getMode()));
-        	if(sensorDto.getBrand() != null)
-        		sensor.setBrand(brandRepository.findByBrand(sensorDto.getBrand()));
-        	
-            BeanUtils.copyProperties(sensorDto, sensor, Utils.getNullPropertyNames(sensorDto));
+			Sensor sensor = sensorRepository.findBySerialNumber(sensorDto.getSerialNumber());
 
-            sensorRepository.save(sensor);
-            return new ResponseEntity<HttpStatus>(HttpStatus.OK);
-        }
+			if ((sensorDto.getBrand() != null && !brandRepository.existsByBrand(sensorDto.getBrand()))
+					|| (sensorDto.getMode() != null && !modeRepository.existsByMode(sensorDto.getMode())))
+				return new ResponseEntity<HttpStatus>(HttpStatus.BAD_REQUEST);
+
+			if (sensorDto.getMode() != null && modeRepository.existsByMode(sensorDto.getMode()))
+				sensor.setMode(modeRepository.findByMode(sensorDto.getMode()));
+			if (sensorDto.getBrand() != null && brandRepository.existsByBrand(sensorDto.getBrand()))
+				sensor.setBrand(brandRepository.findByBrand(sensorDto.getBrand()));
+
+			BeanUtils.copyProperties(sensorDto, sensor, Utils.getNullPropertyNames(sensorDto));
+
+			sensorRepository.save(sensor);
+			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+		}
 		return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
-	}
+	};
 
 	@Override
 	public ResponseEntity<HttpStatus> delete(int id) {
-		if(sensorRepository.existsById(id)) {
+		if (sensorRepository.existsById(id)) {
 			sensorRepository.deleteById(id);
 			return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 		}
